@@ -1,0 +1,14 @@
+{
+  "name": "AudioWatcher",
+  "version": "0.0.0",
+  "description": "AudioGuy Plays & pauses music from a specific tab when other audio is detected",
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AudioGUy"
+  },
+  "manifest_version": 3
+}
