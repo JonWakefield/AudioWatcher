@@ -3,31 +3,33 @@
 
 <head>
     <title>Audio Detector</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 10px;
-            width: 250px;
-            height: 150px;
-        }
-
-        h1 {
-            font-size: 16px;
-            margin: 0 0 10px;
-        }
-
-        button {
-            padding: 5px 10px;
-            font-size: 14px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-    <h1>Audio guy</h1>
-    <button id="setAudioTabButton">Set Tab</button>
-    <button id="addToWhiteList">Add site</button>
-    <button id="removeFromWhiteList">Remove Site</button>
+    <div class="container">
+        <div class="row1">
+            <div class="header">
+                <h2>&#x1F440 Audio Watcher &#x1F440</h2>
+                <p>Set the current tab to watch</p>
+            </div>
+            <div>
+                <button class="button" id="setAudioTabButton">Set Tab</button>
+            </div>
+        </div>
+        <div class="wl-row">
+            <div class="header">
+                <h2>
+                    &#x2705 WhiteList &#x2705
+                </h2>
+                <p>Manage whitelist to control set tab audio muting/unmuting.</p>
+            </div>
+            <div class="whiteList-buttons">
+                <button class="button" id="addToWhiteList">Add site</button>
+                <button class="button" id="removeFromWhiteList">Remove Site</button>
+            </div>
+        </div>
+    </div>
     <script src="popup.js"></script>
 </body>
 

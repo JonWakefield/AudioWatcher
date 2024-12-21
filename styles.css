@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Montserrat", sans-serif;
+    background-color: #11181c;
+    color: #F8FBF8;
+}
+
+.container {
+    width: 275px;
+    height: 300px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.row1 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: fit-content;
+    padding: 10px;
+}
+.header {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.header h1 {
+    padding-top: 10px;
+    width: 100%;
+    font-size: 20px;
+    letter-spacing: -0.025em;
+}
+
+.header p {
+    padding-bottom: 7.5px;
+    font-weight: 600;
+    font-size: 12.5px;
+}
+
+.wl-row {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+}
+
+
+.whiteList-buttons {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+}
+
+.button {
+    width: 80px;
+    height: 30px;
+    font-size: 15px;
+    line-height: 0.8rem;
+    font-weight: 700;
+    background-color: #4498AE;
+    color: #121212;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.button:hover {
+    /* transform: scale(1.05); */
+    background-color: #4499aebc;
+}
+.button:active {
+    transform: scale(0.95);
+}
