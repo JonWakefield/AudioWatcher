@@ -16,10 +16,20 @@ function updateTab(newTabId) {
 function addWLTab(tabId) {
     console.log("Adding tab to whitelist", tabId)
     whiteListTabs.add(tabId);
+    if (tabId in tabsWithAudio) {
+        checkIfEmpty(tabId);
+    }
 }
 function removeWLTab(tabId) {
     console.log("removing tab to whitelist ", tabId)
     whiteListTabs.delete(tabId);
+}
+
+function checkIfEmpty(tabId) {
+    delete tabsWithAudio[tabId];
+    if (Object.keys(tabsWithAudio).length === 0) {
+        toggleMuteState(audioTabId, false)
+    }
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -51,10 +61,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
     if (tab.audible === false && tabId in tabsWithAudio) {
         console.log("Audio Changed!")
-        delete tabsWithAudio[tabId];
-        if (Object.keys(tabsWithAudio).length === 0) {
-            toggleMuteState(audioTabId, false)
-        }
+        checkIfEmpty(tabId)
         console.log("Tabs with audio: ", tabsWithAudio)
     }
 })
