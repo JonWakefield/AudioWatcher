@@ -1,149 +1,122 @@
-* {
-    margin: 0;
-    padding: 0;
+/* Base styles and variables */
+:root {
+    --primary-blue: #2c3e50;
+    --secondary-blue: #34495e;
+    --accent-blue: #3498db;
+    --text-light: #ecf0f1;
+    --text-dark: #121212;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
 }
 
 body {
-    font-family: "Montserrat", sans-serif;
-    background-color: #11181c;
-    color: #F8FBF8;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--text-dark);
+    width: 320px;
+    height: auto;
 }
 
 .container {
-    width: 280px;
-    height: 300px;
-    display: flex;
-    /* justify-content: space-around; */
-    align-items: center;
-    flex-direction: column;
-
+    padding: 16px;
+    background: #eee;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.row1 {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: fit-content;
-    padding: 15px 0px 5px;
-}
-
+/* Header Styles */
 .header {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding-bottom: 5px;
+    margin-bottom: 16px;
 }
 
-.button {
-    width: 100%;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.header h1 {
-    padding-top: 10px;
-    width: 100%;
-    font-size: 20px;
-    letter-spacing: -0.025em;
+.header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    font-weight: 600;
 }
 
 .header p {
-    font-weight: 600;
-    font-size: 12.5px;
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: #666;
 }
 
-.info-row { 
-    width: 100%;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 10px 0px 10px;
-}
-
-.info-box {
-    height: 100%;
-    width: 250px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-
-.info-box p {
-    text-align: center;
-    width: 100%;
-    padding-bottom: 7.5px;
-    font-weight: 600;
-    font-size: 12.5px;
-}
-
-.wl-row {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 10px;
-}
-
-.wl-header {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding-bottom: 5px;
-}
-
-.wl-header h1 {
-    padding-top: 10px;
-    width: 100%;
-    font-size: 20px;
-    letter-spacing: -0.025em;
-}
-
-.wl-header p {
-    font-weight: 600;
-    font-size: 12.5px;
-}
-
-
-.whiteList-buttons {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-direction: row;
-}
-
+/* Button Styles */
 .button {
-    width: 80px;
-    height: 30px;
-    font-size: 15px;
-    line-height: 0.8rem;
-    font-weight: 700;
-    background-color: #4498AE;
-    color: #121212;
-    border-radius: 12px;
-    border-width: 0px;
-    text-align: center;
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
     cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
 }
 
 .button:hover {
-    /* transform: scale(1.05); */
-    background-color: #4499aebc;
+    background-color: #2980b9;
+    transform: translateY(-1px);
 }
-.button:active {
-    transform: scale(0.95);
+
+/* Info Box Styles */
+.info-row {
+    margin: 16px 0;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+.info-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-box img {
+    width: 24px;
+    height: 24px;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Whitelist Section Styles */
+.wl-row {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.wl-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+}
+
+.wl-header p {
+    margin: 4px 0 12px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.whiteList-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+    .container {
+        padding: 12px;
+    }
+    
+    .button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
 }
