@@ -76,6 +76,7 @@ body {
     background-color: #4498AE;
     color: #121212;
     border-radius: 12px;
+    border-width: 0px;
     text-align: center;
     cursor: pointer;
 }

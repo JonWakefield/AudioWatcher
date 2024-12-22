@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "AudioGuy Plays & pauses music from a specific tab when other audio is detected",
   "permissions": ["tabs"],
+  "host_permissions": ["*://*/*"],
   "background": {
     "service_worker": "background.js"
   },
