@@ -1,4 +1,3 @@
-
 let audioTabId = false;
 let tabsWithAudio = {}
 
@@ -36,7 +35,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "updateAudioTab") {
         let data = message.data;
         let tabId = data.tabId;
-        console.log("Received data: ", data)
         if (data.type === "updateTab") {
             updateTab(tabId);
         } else if (data.type === "addWL") {

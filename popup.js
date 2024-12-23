@@ -55,11 +55,14 @@ function sendTabId(type) {
 
 function queryAllTabs(tabId, title, icon) {
     chrome.tabs.query({}, function (tabs) {
-        console.log("called...")
         for(const tab of tabs) {
             if (tab.id == tabId) {
-                updateTitle(title);
-                updateIcon(icon);
+                if(title) {
+                    updateTitle(title);
+                }
+                if (icon) {
+                    updateIcon(icon);
+                }
             }
         }
     })
