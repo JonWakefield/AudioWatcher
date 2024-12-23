@@ -13,14 +13,14 @@ function updateTab(newTabId) {
 }
 
 function addWLTab(tabId) {
-    console.log("Adding tab to whitelist", tabId)
+    // console.log("Adding tab to whitelist", tabId)
     whiteListTabs.add(tabId);
     if (tabId in tabsWithAudio) {
         checkIfEmpty(tabId);
     }
 }
 function removeWLTab(tabId) {
-    console.log("removing tab to whitelist ", tabId)
+    // console.log("removing tab to whitelist ", tabId)
     whiteListTabs.delete(tabId);
 }
 
@@ -29,6 +29,7 @@ function checkIfEmpty(tabId) {
     if (Object.keys(tabsWithAudio).length === 0) {
         toggleMuteState(audioTabId, false)
     }
+    logNewStorage();
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -46,30 +47,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 })
 
+function logNewStorage() {
+    // FUNCTION USED FOR DEBUGGING
+    // console.log(`The current tabs with audio are ${Object.entries(tabsWithAudio)}`)
+}
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!audioTabId) {
         return;
     }
-    // console.log(tab);
+    // console.log("Update Tab Info: ", tab);
     if (tab.audible === true && tabId != audioTabId && !whiteListTabs.has(tabId)) {
         tabsWithAudio[tabId] = true;
+        logNewStorage();
         toggleMuteState(audioTabId, true);
-        console.log("Tabs with audio: ", tabsWithAudio)
     }
     if (tab.audible === false && tabId in tabsWithAudio) {
-        console.log("Audio Changed!")
         checkIfEmpty(tabId)
-        console.log("Tabs with audio: ", tabsWithAudio)
     }
 })
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
     if(tabId in tabsWithAudio) {
-        delete tabsWithAudio[tabId];
-        if (Object.keys(tabsWithAudio).length === 0) {
-            toggleMuteState(audioTabId, false)
-        }
+        checkIfEmpty(tabId);
     }
 })
 
@@ -77,5 +77,5 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 async function toggleMuteState(tabId, muted) {
     const tab = await chrome.tabs.get(tabId);
     await chrome.tabs.update(tabId, {muted});
-    console.log(`Tab ${tab.id} is ${muted ? "muted" : "unmuted"}`)
+    // console.log(`Tab ${tab.id} is ${muted ? "muted" : "unmuted"}`)
 }
