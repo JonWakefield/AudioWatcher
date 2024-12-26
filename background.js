@@ -13,6 +13,7 @@ chrome.storage.local.get(["audioTabId"], async function (result) {
     console.log("Current Audio Tab: ", audioTabId)
 })
 
+
 chrome.storage.local.get(["whiteListTabs"], async function (result) {
     whiteListTabs = new Set(result.whiteListTabs);
     console.log("WL tabs retrieved: ", whiteListTabs);
@@ -22,8 +23,6 @@ chrome.storage.local.get(["tabsWithAudio"], async function (result) {
     tabsWithAudio = new Set(result.tabsWithAudio);
     console.log("Current tabs with audiio: ", tabsWithAudio);
 })
-
-
 
 async function updateTab(newTabId) {
     audioTabId = newTabId;
@@ -85,6 +84,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!audioTabId) {
         return;
     }
+
     // console.log("Update Tab Info: ", tab);
     if (tab.audible === true && tabId != audioTabId && !whiteListTabs.has(tabId)) {
         tabsWithAudio.add(tabId);
@@ -99,8 +99,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 })
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-    if(tabsWithAudio.has(tabId)) {
-        checkIfEmpty(tabId);
+    try {
+        if(tabsWithAudio.has(tabId)) {
+            checkIfEmpty(tabId);
+        }
+    } catch (err) {
+        console.error("Error On tab Removal: ", err)
+        tabsWithAudio = new Set();
+    }
+    if (whiteListTabs.has(tabId)) {
+        removeWLTab(tabId);
     }
 })
 
@@ -108,8 +116,7 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 async function toggleMuteState(tabId, muted) {
     try {
         await chrome.tabs.update(tabId, {muted});
-        // console.log(`Tab ${tab.id} is ${muted ? "muted" : "unmuted"}`)
     } catch (err) {
-        console.log("Error: ", err);
+        console.error("Error: ", err);
     }
 }
