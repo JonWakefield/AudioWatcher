@@ -2,7 +2,7 @@
 
 # Description:
 
-AudioWatcher is a lightweight Chrome Extension that automatically mutes and unmutes the audio of a designated tab when audio is detected from a different tab. It is particularly useful for managing background music while studying / working.
+AudioWatcher is a simple Chrome Extension that automatically mutes and unmutes the audio of a designated tab when audio is detected from a different tab. It is particularly useful for managing background music while studying / working.
 
 # Features:
 
@@ -10,10 +10,6 @@ AudioWatcher is a lightweight Chrome Extension that automatically mutes and unmu
 - Includes a whitelist feature for selective site control.
 - Operates seamlessly in the background on any Chrome tab.
 - Prioritizes privacy by not collecting any user data. 😊
-
-# Demo:
-
-[![Demo Video]()]()
 
 # Installation
 
