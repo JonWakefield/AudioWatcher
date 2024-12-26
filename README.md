@@ -11,6 +11,10 @@ AudioWatcher is a simple Chrome Extension that automatically mutes and unmutes t
 - Operates seamlessly in the background on any Chrome tab.
 - Prioritizes privacy by not collecting any user data. 😊
 
+# Visual:
+
+![](demo.png)
+
 # Installation
 
 Setting up AudioWatcher can be done via cloning from github or downloading from the Chrome web store.
