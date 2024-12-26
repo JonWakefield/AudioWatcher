@@ -41,7 +41,7 @@ async function updateTab(newTabId) {
 
 function addWLTab(tabId) {
     whiteListTabs.add(tabId);
-    if (tabId in tabsWithAudio) {
+    if (tabsWithAudio.has(tabId)) {
         checkIfEmpty(tabId);
     }
     chrome.storage.local.set({ whiteListTabs: Array.from(whiteListTabs)}).then(() => {
@@ -57,7 +57,7 @@ function removeWLTab(tabId) {
 
 function checkIfEmpty(tabId) {
     tabsWithAudio.delete(tabId);
-    if (Object.keys(tabsWithAudio).length === 0) {
+    if (tabsWithAudio.size === 0) {
         toggleMuteState(audioTabId, false)
     }
     chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)}).then(() => {
@@ -99,7 +99,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 })
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-    if(tabId in tabsWithAudio) {
+    if(tabsWithAudio.has(tabId)) {
         checkIfEmpty(tabId);
     }
 })
