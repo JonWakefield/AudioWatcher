@@ -25,9 +25,9 @@ function updateIcon(iconUrl) {
     localStorage.setItem(storageKeys.iconKey, iconUrl)
 }
 
-function updateTabId(tabId) {
-    localStorage.setItem(storageKeys.tabId, tabId)
-}
+// function updateTabId(tabId) {
+//     localStorage.setItem(storageKeys.tabId, tabId)
+// }
 
 function sendMsg(type) {
     chrome.tabs.query({ active: true, currentWindow: true}, function(tabs) {
@@ -45,7 +45,6 @@ function sendMsg(type) {
             if (type == msgTypes.update) {
                 updateTitle(title);
                 updateIcon(iconUrl);
-                updateTabId(tabId);
             }
         }
     })
@@ -84,12 +83,12 @@ async function getTabMuteState(tabId) {
     return muted
 }
 
-function loadContent() {
+async function loadContent() {
 
     // get data from local storage if exists:
     let title = localStorage.getItem(storageKeys.titleKey);
     let icon = localStorage.getItem(storageKeys.iconKey);
-    let tabId = localStorage.getItem(storageKeys.tabId);
+    let tabId = await getAudioTabId([storageKeys.audioTabId]);
     queryAllTabs(tabId, title, icon);
 
     let toggleMuteButton = document.getElementById("toggleMute")
