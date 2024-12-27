@@ -40,10 +40,7 @@ function sendMsg(type) {
                 tabId: tabId,
             }
             chrome.runtime.sendMessage({type: type, data: data}, (response) => {
-                if (type === msgTypes.toggle) {
-                    console.log("Site is muted: ", response)
-                }
-                console.log("Site is muted: ", response)
+                console.log("Response ", response)
             })
             if (type == msgTypes.update) {
                 updateTitle(title);
@@ -57,7 +54,7 @@ function sendMsg(type) {
 function queryAllTabs(tabId, title, icon) {
     chrome.tabs.query({}, function (tabs) {
         for(const tab of tabs) {
-            if (tab.id == tabId) {
+            if (tab.id === tabId) {
                 if(title) {
                     updateTitle(title);
                 }
@@ -84,7 +81,6 @@ function getAudioTabId(key) {
 async function getTabMuteState(tabId) {
     const tab = await chrome.tabs.get(tabId)
     let muted = tab.mutedInfo.muted
-    console.log("Tab is muted: ", muted)
     return muted
 }
 
@@ -98,7 +94,6 @@ function loadContent() {
 
     let toggleMuteButton = document.getElementById("toggleMute")
     
-
     document.getElementById("setAudioTabButton").addEventListener("click", () => {
         sendMsg(msgTypes.update)
     })
@@ -115,9 +110,8 @@ function loadContent() {
         sendMsg(msgTypes.toggle)
         try {
             let audioTabId = await getAudioTabId([storageKeys.audioTabId]);
-            console.log("Auido tab ", audioTabId)
-            let muteState = getTabMuteState(audioTabId);
-            let text = muteState ? "unmute" : "mute";
+            let muteState = await getTabMuteState(audioTabId);
+            let text = muteState ? "Mute" : "Unmute";
             toggleMuteButton.textContent = text;
         } catch (err) {
             console.log("Error fetching from storage. ", err)
