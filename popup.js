@@ -1,4 +1,3 @@
-
 let activeTabTitle = document.getElementById("currentTabtitle");
 let activeTabIcon = document.getElementById("tabIcon");
 
@@ -6,12 +5,14 @@ let storageKeys = {
     titleKey: "activeTabTitle",
     iconKey: "activeTabIcon",
     tabId: "activeTabID",
+    audioTabId: "audioTabId"
 }
 
 let msgTypes = {
     update: "updateTab",
     add: "addWL",
     remove: "removeWL",
+    toggle: "toggleMute",
 }
 
 function updateTitle(title) {
@@ -28,21 +29,21 @@ function updateTabId(tabId) {
     localStorage.setItem(storageKeys.tabId, tabId)
 }
 
-function sendTabId(type) {
+function sendMsg(type) {
     chrome.tabs.query({ active: true, currentWindow: true}, function(tabs) {
         if (tabs.length > 0) {
             const activeTab = tabs[0]
             const tabId = activeTab.id;
             const title = activeTab.title;
             const iconUrl = activeTab.favIconUrl;
-            console.log("tab: ", tabs[0]);
-            console.log("Sending Tab ID: ", tabId);
             let data = {
                 tabId: tabId,
-                type: type
             }
-            chrome.runtime.sendMessage({type: "updateAudioTab", data: data}, (response) => {
-                console.log("response: ", response.message);
+            chrome.runtime.sendMessage({type: type, data: data}, (response) => {
+                if (type === msgTypes.toggle) {
+                    console.log("Site is muted: ", response)
+                }
+                console.log("Site is muted: ", response)
             })
             if (type == msgTypes.update) {
                 updateTitle(title);
@@ -68,6 +69,24 @@ function queryAllTabs(tabId, title, icon) {
     })
 }
 
+function getAudioTabId(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get(key, (result) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+            } else {
+                resolve(result.audioTabId);
+            }
+        })    
+    })
+}
+
+async function getTabMuteState(tabId) {
+    const tab = await chrome.tabs.get(tabId)
+    let muted = tab.mutedInfo.muted
+    console.log("Tab is muted: ", muted)
+    return muted
+}
 
 function loadContent() {
 
@@ -76,19 +95,34 @@ function loadContent() {
     let icon = localStorage.getItem(storageKeys.iconKey);
     let tabId = localStorage.getItem(storageKeys.tabId);
     queryAllTabs(tabId, title, icon);
+
+    let toggleMuteButton = document.getElementById("toggleMute")
     
 
     document.getElementById("setAudioTabButton").addEventListener("click", () => {
-        sendTabId(msgTypes.update)
+        sendMsg(msgTypes.update)
     })
     
     document.getElementById("addToWhiteList").addEventListener("click", () => {
-        sendTabId(msgTypes.add)
+        sendMsg(msgTypes.add)
     })
     
     document.getElementById("removeFromWhiteList").addEventListener("click", () => {
-        sendTabId(msgTypes.remove)
+        sendMsg(msgTypes.remove)
     })  
+
+    toggleMuteButton.addEventListener("click", async () => {
+        sendMsg(msgTypes.toggle)
+        try {
+            let audioTabId = await getAudioTabId([storageKeys.audioTabId]);
+            console.log("Auido tab ", audioTabId)
+            let muteState = getTabMuteState(audioTabId);
+            let text = muteState ? "unmute" : "mute";
+            toggleMuteButton.textContent = text;
+        } catch (err) {
+            console.log("Error fetching from storage. ", err)
+        }
+    })
 
 }
 

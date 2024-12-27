@@ -28,6 +28,9 @@ async function updateTab(newTabId) {
     // update persistant storage
     chrome.storage.local.set({ audioTabId: newTabId})
 
+    // unmute tab if its muted
+    chrome.tabs.get(newTabId, (tab) => {tab.mutedInfo.muted = false;})
+
     // reset tabs with audio
     tabsWithAudio = new Set(); // reset audio tabs
     chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)})
@@ -48,7 +51,7 @@ function removeWLTab(tabId) {
 function checkIfEmpty(tabId) {
     tabsWithAudio.delete(tabId);
     if (tabsWithAudio.size === 0) {
-        toggleMuteState(audioTabId, false)
+        changeMuteState(audioTabId, false)
     }
     // chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)}).then(() => {
     //     console.log("Tabs with audio set: ", tabsWithAudio);
@@ -56,20 +59,22 @@ function checkIfEmpty(tabId) {
     chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)})
 }
 
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "updateAudioTab") {
-        let data = message.data;
-        let tabId = data.tabId;
-        if (data.type === "updateTab") {
-            updateTab(tabId);
-        } else if (data.type === "addWL") {
-            addWLTab(tabId)
-        } else if (data.type === "removeWL") {
-            removeWLTab(tabId)
-        }
-        sendResponse({ message: "Successfully Recieved TabId"});
+    let data = message.data;
+    let tabId = data.tabId;
+    if (message.type === "updateTab") {
+        updateTab(tabId);
+    } else if (message.type === "addWL") {
+        addWLTab(tabId)
+    } else if (message.type === "removeWL") {
+        removeWLTab(tabId)
+    } else if (message.type === "toggleMute") {
+        let muted = toggleMuteState(audioTabId);
     }
+    sendResponse({ message: "Successfully Recieved TabId"});
 })
+
 
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -77,14 +82,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         return;
     }
 
-    // console.log("Update Tab Info: ", tab);
-    if (tab.audible === true && tabId != audioTabId && !whiteListTabs.has(tabId)) {
-        tabsWithAudio.add(tabId);
-        toggleMuteState(audioTabId, true);
-        chrome.storage.local.set({tabsWithAudio: Array.from(tabsWithAudio)})
-    }
-    if (tab.audible === false && tabsWithAudio.has(tabId)) {
-        checkIfEmpty(tabId)
+    try { 
+        if (tab.audible === true && tabId != audioTabId && !whiteListTabs.has(tabId)) {
+            tabsWithAudio.add(tabId);
+            changeMuteState(audioTabId, true);
+            chrome.storage.local.set({tabsWithAudio: Array.from(tabsWithAudio)})
+        }
+        if (tab.audible === false && tabsWithAudio.has(tabId)) {
+            checkIfEmpty(tabId)
+        }
+    } catch (err) {
+        console.log(err);
     }
 })
 
@@ -97,16 +105,27 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
         console.log("Error On tab Removal: ", err)
         tabsWithAudio = new Set();
     }
-    if (whiteListTabs.has(tabId)) {
-        removeWLTab(tabId);
+    try {
+        if (whiteListTabs.has(tabId)) {
+            removeWLTab(tabId);
+        }
+    } catch (err) {
+        console.log("Error On tab Removal: ", err)
     }
 })
 
 
-async function toggleMuteState(tabId, muted) {
+async function changeMuteState(tabId, muted) {
     try {
         await chrome.tabs.update(tabId, {muted});
     } catch (err) {
         console.log(err);
     }
+}
+
+async function toggleMuteState(tabId) {
+    const tab = await chrome.tabs.get(tabId)
+    let muted = !tab.mutedInfo.muted
+    changeMuteState(tabId, muted);
+    return muted
 }
