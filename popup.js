@@ -25,10 +25,6 @@ function updateIcon(iconUrl) {
     localStorage.setItem(storageKeys.iconKey, iconUrl)
 }
 
-// function updateTabId(tabId) {
-//     localStorage.setItem(storageKeys.tabId, tabId)
-// }
-
 function sendMsg(type) {
     chrome.tabs.query({ active: true, currentWindow: true}, function(tabs) {
         if (tabs.length > 0) {
@@ -83,6 +79,18 @@ async function getTabMuteState(tabId) {
     return muted
 }
 
+async function updateMuteState(toggleMuteButton) {
+    // update the displayed texted for the `mute` button
+    try {
+        let audioTabId = await getAudioTabId([storageKeys.audioTabId]);
+        let muteState = await getTabMuteState(audioTabId);
+        let text = muteState ? "Mute" : "Unmute";
+        toggleMuteButton.textContent = text;
+    } catch (err) {
+        console.log("Error fetching from storage. ", err)
+    }
+}
+
 async function loadContent() {
 
     // get data from local storage if exists:
@@ -90,8 +98,9 @@ async function loadContent() {
     let icon = localStorage.getItem(storageKeys.iconKey);
     let tabId = await getAudioTabId([storageKeys.audioTabId]);
     queryAllTabs(tabId, title, icon);
-
+    
     let toggleMuteButton = document.getElementById("toggleMute")
+    updateMuteState(toggleMuteButton);
     
     document.getElementById("setAudioTabButton").addEventListener("click", () => {
         sendMsg(msgTypes.update)
@@ -107,14 +116,7 @@ async function loadContent() {
 
     toggleMuteButton.addEventListener("click", async () => {
         sendMsg(msgTypes.toggle)
-        try {
-            let audioTabId = await getAudioTabId([storageKeys.audioTabId]);
-            let muteState = await getTabMuteState(audioTabId);
-            let text = muteState ? "Mute" : "Unmute";
-            toggleMuteButton.textContent = text;
-        } catch (err) {
-            console.log("Error fetching from storage. ", err)
-        }
+        updateMuteState(toggleMuteButton);
     })
 
 }
