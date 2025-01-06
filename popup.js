@@ -118,7 +118,6 @@ async function loadContent() {
         sendMsg(msgTypes.toggle)
         updateMuteState(toggleMuteButton);
     })
-
 }
 
 

@@ -2,34 +2,40 @@ chrome.runtime.onInstalled.addListener(() => {
     console.log("Extension Installed");
 })
 
+let logging = true;
 
 let audioTabId; // type: str (maybe int idk)
 let tabsWithAudio; // type: Set 
 let whiteListTabs; // type: Set
 
+
 chrome.storage.local.get(["audioTabId"], async function (result) {
     audioTabId = result.audioTabId;
-    // console.log("Current Audio Tab: ", audioTabId)
+    if (logging) {
+        console.log("Current Audio Tab: ", audioTabId)
+    }
 })
 
 
 chrome.storage.local.get(["whiteListTabs"], async function (result) {
     whiteListTabs = new Set(result.whiteListTabs);
-    // console.log("WL tabs retrieved: ", whiteListTabs);
+    if (logging) {
+        console.log("WL tabs retrieved: ", whiteListTabs);
+    }
 })
 
 chrome.storage.local.get(["tabsWithAudio"], async function (result) {
     tabsWithAudio = new Set(result.tabsWithAudio);
-    // console.log("Current tabs with audiio: ", tabsWithAudio);
+    if (logging) {
+        console.log("Current tabs with audio: ", tabsWithAudio);
+    }
 })
 
 async function updateTab(newTabId) {
     audioTabId = newTabId;
+
     // update persistant storage
     chrome.storage.local.set({ audioTabId: newTabId})
-
-    // unmute tab if its muted
-    chrome.tabs.get(newTabId, (tab) => {tab.mutedInfo.muted = false;})
 
     // reset tabs with audio
     tabsWithAudio = new Set(); // reset audio tabs
@@ -48,15 +54,38 @@ function removeWLTab(tabId) {
     chrome.storage.local.set({ whiteListTabs: Array.from(whiteListTabs)})
 }
 
+async function checkForAudioTabs() {
+    // iterate through `tabsWithAudio` 
+    // if no tabs are currently playing audio -> unmute set tab
+    
+    for (const tabId of tabsWithAudio) {
+        let tab;
+        try {
+            tab = await chrome.tabs.get(tabId)
+        } catch (err) {
+            tabsWithAudio.delete(tabId); // remove no-longer active tab
+            continue
+        }
+        if (tab.audible) {
+            return false;
+        }
+    }
+    // no tabs found with audio playing
+    return true;
+}
+
 function checkIfEmpty(tabId) {
     tabsWithAudio.delete(tabId);
-    if (tabsWithAudio.size === 0) {
+    if (checkForAudioTabs()) {
         changeMuteState(audioTabId, false)
     }
-    // chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)}).then(() => {
-    //     console.log("Tabs with audio set: ", tabsWithAudio);
-    // })
-    chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)})
+    if (logging) {
+        chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)}).then(() => {
+            console.log("Tabs with audio set: ", tabsWithAudio);
+        })
+    } else {
+        chrome.storage.local.set({ tabsWithAudio: Array.from(tabsWithAudio)})
+    }
 }
 
 
@@ -86,7 +115,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         if (tab.audible === true && tabId != audioTabId && !whiteListTabs.has(tabId)) {
             tabsWithAudio.add(tabId);
             changeMuteState(audioTabId, true);
-            chrome.storage.local.set({tabsWithAudio: Array.from(tabsWithAudio)})
+            if (logging) {
+                chrome.storage.local.set({tabsWithAudio: Array.from(tabsWithAudio)}).then(() => {
+                    console.log("Tabs with audio set: ", tabsWithAudio);
+                })
+            } else {
+                chrome.storage.local.set({tabsWithAudio: Array.from(tabsWithAudio)});
+            }
         }
         if (tab.audible === false && tabsWithAudio.has(tabId)) {
             checkIfEmpty(tabId)
