@@ -21,7 +21,7 @@ Setting up AudioWatcher can be done via cloning from github or downloading from 
 
 ### Download from webstore
 
-To download AudioWatcher from the webstore, visit [Here](https://chromewebstore.google.com/detail/blmhjmodhcmecngddldldihgiikpebhd/preview?hl=en&authuser=0&pli=1)
+To download AudioWatcher from the webstore, visit [Here](https://chromewebstore.google.com/detail/audiowatcher/blmhjmodhcmecngddldldihgiikpebhd)
 
 ### Cloned from git
 
