@@ -2,7 +2,7 @@ chrome.runtime.onInstalled.addListener(() => {
     console.log("Extension Installed");
 })
 
-let logging = true;
+let logging = false;
 
 let audioTabId; // type: str (maybe int idk)
 let tabsWithAudio; // type: Set 
