@@ -151,6 +151,10 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 
 
 async function changeMuteState(tabId, muted) {
+    // this check fixes bug related to quickly swapping audio between multiple tabs, ensure setTab does not unmute
+    if (tabsWithAudio.size != 0 && !muted) {
+        return;
+    }
     try {
         await chrome.tabs.update(tabId, {muted});
     } catch (err) {
